@@ -22,7 +22,17 @@ function checksExistsUserAccount(request, response, next) {
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
-  // Complete aqui
+  const { id } = request.params
+  const { user } = request
+
+  const task = user.todos.find(task => task.id === id)
+
+  if (!task) {
+    return response.status(404).json({ error: 'Task not found' })
+  }
+
+  request.task = task;
+  return next();
 }
 
 function checksTodoExists(request, response, next) {
