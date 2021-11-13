@@ -130,7 +130,7 @@ app.put('/todos/:id', checksTodoExists, (request, response) => {
   return response.json(todo);
 });
 
-app.patch('/todos/:id/done', checksTodoExists, (request, response) => {
+app.patch('/todos/:id/done', checksExistsUserAccount, checksTodoExists, (request, response) => {
   const { todo } = request;
 
   console.log('todo', todo)
