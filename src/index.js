@@ -33,22 +33,35 @@ function checksCreateTodosUserAvailability(request, response, next) {
 
 function checksTodoExists(request, response, next) {
   const { id } = request.params
-  const { user } = request
+  const { username } = request.headers
+
+  if(!validate(id)){
+    return response.status(400).json({ error: 'Id not valid' })
+  }
+
+  const user = users.find((user) => user.username === username)
+  if (!user) {
+    return response.status(404).json({ error: 'User not found' })
+  }
 
   const task = user.todos.find(task => task.id === id)
-
   if (!task) {
     return response.status(404).json({ error: 'Task not found' })
   }
 
   request.todo = task;
+  request.user = user;
   return next();
 }
 
 function findUserById(request, response, next) {
   const { id } = request.params
-  const user = users.find((user) => user.id === id)
 
+  if(!validate(id)){
+    return response.status(400).json({ error: 'Id not valid' })
+  }
+
+  const user = users.find((user) => user.id === id)
   if (!user) {
     return response.status(404).json({ error: 'User not found' })
   }
@@ -130,10 +143,8 @@ app.put('/todos/:id', checksTodoExists, (request, response) => {
   return response.json(todo);
 });
 
-app.patch('/todos/:id/done', checksExistsUserAccount, checksTodoExists, (request, response) => {
+app.patch('/todos/:id/done', checksTodoExists, (request, response) => {
   const { todo } = request;
-
-  console.log('todo', todo)
 
   todo.done = true;
 
@@ -161,4 +172,4 @@ module.exports = {
   checksCreateTodosUserAvailability,
   checksTodoExists,
   findUserById
-};
+}
