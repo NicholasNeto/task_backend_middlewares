@@ -22,16 +22,12 @@ function checksExistsUserAccount(request, response, next) {
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
-  const { id } = request.params
   const { user } = request
 
-  const task = user.todos.find(task => task.id === id)
-
-  if (!task) {
+  if (!user.pro && user.todos.length >= 10) {
     return response.status(404).json({ error: 'Task not found' })
   }
 
-  request.task = task;
   return next();
 }
 
@@ -45,7 +41,7 @@ function checksTodoExists(request, response, next) {
     return response.status(404).json({ error: 'Task not found' })
   }
 
-  request.task = task;
+  request.todo = task;
   return next();
 }
 
@@ -136,6 +132,8 @@ app.put('/todos/:id', checksTodoExists, (request, response) => {
 
 app.patch('/todos/:id/done', checksTodoExists, (request, response) => {
   const { todo } = request;
+
+  console.log('todo', todo)
 
   todo.done = true;
 
