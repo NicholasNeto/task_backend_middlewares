@@ -25,7 +25,7 @@ function checksCreateTodosUserAvailability(request, response, next) {
   const { user } = request
 
   if (!user.pro && user.todos.length >= 10) {
-    return response.status(404).json({ error: 'Task not found' })
+    return response.status(403).json({ error: 'Task not found' })
   }
 
   return next();
